@@ -33,7 +33,13 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
-      ]
+      ],
+      [ 
+        "expo-image-picker", 
+        { 
+          "photosPermission": "This app needs access to your photos to allow you to upload images." 
+        }
+      ] 
     ],
     "experiments": {
       "typedRoutes": true
