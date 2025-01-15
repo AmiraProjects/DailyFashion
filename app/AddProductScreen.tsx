@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native'
 import React, {useState} from 'react'
-import * as ImagePicker from 'expo-image-picker';
+// import * as ImagePicker from 'expo-image-picker';
+import { InputComponent } from '@/components/InputComponent'
 
 const AddProductScreen = () => {
 
@@ -38,6 +39,13 @@ const AddProductScreen = () => {
     }
   }
 
+  const onInputChange = (type: keyof typeof productData, value: string | number) => {
+    setProductData({
+      ...productData,
+      [type]: value
+    })
+  }
+
   return (
     <View style={styles.mainContainer}>
       <ScrollView contentContainerStyle={styles.scroll}>
@@ -59,6 +67,28 @@ const AddProductScreen = () => {
                     'https://e7.pngegg.com/pngimages/21/312/png-clipart-camera-computer-icons-graphy-camera-icon-camera-lens-camera-icon.png'
             }}/>
           </TouchableOpacity>
+        </View>
+        
+        <View style={styles.horizontalContainer}>
+            <InputComponent
+            placeholder='Product Name'
+            value={productData.productName}
+            onChangeText={(text) => onInputChange('productName', text)}
+            />
+        </View>
+
+        <View style={styles.horizontalContainer}>
+            <InputComponent
+            placeholder='Description'
+            value={productData.description}
+            onChangeText={(text) => onInputChange('description', text)}
+            isDescription={true}/>
+
+            <InputComponent
+            placeholder='Price'
+            value={(productData.price as number | null)?.toString()}
+            onChangeText={(text) => onInputChange('price', text)}
+            iconName='dollar'/>
         </View>
       </ScrollView>
     </View>
@@ -84,6 +114,10 @@ const styles = StyleSheet.create({
       borderWidth: 0.5,
       justifyContent: 'center',
       alignItems: 'center'
+    },
+    horizontalContainer: {
+      flexDirection: 'row',
+      alignItems: 'flex-end'
     }
 })
 
