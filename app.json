@@ -34,12 +34,7 @@
           "backgroundColor": "#ffffff"
         }
       ],
-      [ 
-        "expo-image-picker", 
-        { 
-          "photosPermission": "This app needs access to your photos to allow you to upload images." 
-        }
-      ] 
+      ["expo-image-picker"] 
     ],
     "experiments": {
       "typedRoutes": true
@@ -54,3 +49,6 @@
     }
   }
 }
+// { 
+//   "photosPermission": "This app needs access to your photos to allow you to upload images." 
+// }
