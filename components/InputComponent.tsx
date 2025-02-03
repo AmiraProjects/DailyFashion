@@ -1,6 +1,10 @@
 import { StyleSheet, Text, View, TextInput, TextInputProps } from 'react-native'
 import React from 'react'
 import { FontAwesome } from '@expo/vector-icons'
+import {
+    widthPercentageToDP as wp,
+    heightPercentageToDP as hp
+  } from 'react-native-responsive-screen-hooks'
 
 interface InputComponentProps extends TextInputProps{
     isDescription?: boolean;
@@ -40,7 +44,7 @@ const styles = StyleSheet.create({
     input: {
         borderBottomWidth: 1,
         textAlignVertical: 'bottom',
-        fontSize: 16,
+        fontSize: hp('2%'),
         width: '100%'
     }
 })

@@ -7,6 +7,10 @@ import SelectDropdown from 'react-native-select-dropdown'
 import { categoryList } from '@/data/Data'
 import realm from '@/store/realm'
 import { ProductSchema } from '@/store/realm/ProductSchema'
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp
+} from 'react-native-responsive-screen-hooks'
 
 const AddProductScreen = () => {
 
@@ -99,7 +103,7 @@ const AddProductScreen = () => {
           imagePath: productData.imagePath,
           category: productData.category,
           description: productData.description,
-          price: productData.price,
+          price: Number(productData.price),
           instagram: productData.instagram,
           facebook: productData.facebook,
           phoneNumber: productData.phoneNumber,
@@ -140,8 +144,8 @@ const AddProductScreen = () => {
           >
             <Image
             style={{
-              width: productData.imagePath !== ''? 200 : 50,
-              height: productData.imagePath !== ''? 200 : 50,
+              width: productData.imagePath !== ''? wp('50%') : 50,
+              height: productData.imagePath !== ''? wp('50%') : 50,
             }}
             source={{
               uri: productData.imagePath !== '' ?
@@ -240,8 +244,8 @@ const styles = StyleSheet.create({
       marginVertical: 8
     },
     imageButton: {
-      width: 200,
-      height: 200,
+      width: wp('50%'),
+      height: wp('50%'),
       borderWidth: 0.5,
       justifyContent: 'center',
       alignItems: 'center'
@@ -257,7 +261,7 @@ const styles = StyleSheet.create({
       textAlign: 'left',
       marginTop: 16,
       marginLeft: 8,
-      fontSize: 18,
+      fontSize: hp('2.5%'),
       fontWeight: 'bold'
     },
     buttonContainer: {
@@ -276,12 +280,12 @@ const styles = StyleSheet.create({
     selectDropdown: {
       borderRadius: 10,
       backgroundColor: 'skyblue',
-      width: 150,
-      height: 30,
+      width: wp('40%'),
+      height: hp('4%'),
       marginLeft: 8
     },
     selectText: {
-      fontSize: 12
+      fontSize: hp('1.5%')
     }
 })
 

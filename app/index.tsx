@@ -1,17 +1,36 @@
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native'
-import React, {useState} from 'react'
+import { View, Text, StyleSheet, FlatList, TouchableOpacity} from 'react-native'
+import React, {useState, FC} from 'react'
 import { categoryList, imageSlider } from '@/data/Data'
 import {ImageSlider} from 'react-native-image-slider-banner'
 import { Image } from 'react-native'
+import { useRouter } from 'expo-router'
+import { Product } from '@/store/realm/ProductSchema'
+import realm from '@/store/realm'
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp
+} from 'react-native-responsive-screen-hooks'
 
-const Index: React.FC = () => {
+const Index: FC = () => {
+  const router = useRouter();
+
+  const handleIconPress = (categoryId: number) => {
+    //get all product from realm
+    const products = realm.objects<Product>("Product").filtered(`category = ${categoryId}`)
+    //console.log(products)
+    router.push({
+      pathname: '/ShowProductScreen',
+      params: {products: JSON.stringify(Array.from(products))}
+    })
+  }
+
   return (
     <View
       style={styles.mainContainer}
     >
       <ImageSlider
       data={imageSlider}
-      caroselImageStyle={{resizeMode: 'cover', height: 210}}
+      caroselImageStyle={{resizeMode: 'cover', height: hp('30%')}}
       autoPlay={true}
       closeIconColor='#fff'/>
       
@@ -28,7 +47,7 @@ const Index: React.FC = () => {
         showsVerticalScrollIndicator={false}
         renderItem={({item}) => {
           return(
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity style={styles.button} onPress={() => handleIconPress(item.id)}>
               <Image
               source={{uri: item.icon}}
               style={styles.icon}/>
@@ -48,7 +67,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white'
   },
   text: {
-    fontSize: 18,
+    fontSize: hp('2.5%'),
     fontWeight: 'bold',
     color: 'black'
   },
@@ -65,13 +84,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'purple',
     borderRadius: 10,
-    height: 130,
+    height: hp('17%'),
     justifyContent: 'center',
     alignItems: 'center'
   },
   icon: {
-    width: 100,
-    height: 100,
+    width: wp('20%'),
+    height: hp('12%'),
     resizeMode: 'contain'
   },
   itemName: {
