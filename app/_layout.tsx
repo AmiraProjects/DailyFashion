@@ -1,10 +1,10 @@
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { AntDesign } from "@expo/vector-icons";
-import {Drawer} from "expo-router/drawer"
+import { Drawer } from "expo-router/drawer";
 import { StyleSheet } from "react-native";
 
 const RootLayout = () => {
-  return(
+  return (
     // <GestureHandlerRootView style={{flex: 1}}>
     //   <Drawer>
     //     <Drawer.Screen
@@ -76,14 +76,14 @@ const RootLayout = () => {
             ),
           }}
         />
-        
+
         <Drawer.Screen
           name="ShowProductScreen"
           options={{
             title: "Show Product",
             headerStyle: styles.headerStyle,
             headerTitleAlign: "center",
-            drawerItemStyle: { display: "none" }, 
+            drawerItemStyle: { display: "none" },
           }}
         />
         <Drawer.Screen
@@ -94,10 +94,19 @@ const RootLayout = () => {
             drawerItemStyle: { display: "none" },
           }}
         />
+        <Drawer.Screen
+          name="EditProductScreen"
+          options={{
+            title: "Edit Product",
+            headerStyle: styles.headerStyle,
+            headerTitleAlign: "center",
+            drawerItemStyle: { display: "none" },
+          }}
+        />
       </Drawer>
     </GestureHandlerRootView>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -108,4 +117,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default RootLayout
+export default RootLayout;

@@ -14,49 +14,100 @@ import { InputComponent } from "@/components/InputComponent";
 import SelectDropdown from "react-native-select-dropdown";
 import { categoryList } from "@/data/Data";
 import realm from "@/store/realm";
-import { ProductSchema } from "@/store/realm/ProductSchema";
+import { Product, ProductSchema } from "@/store/realm/ProductSchema";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen-hooks";
-import { useRouter } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 
-const AddProductScreen = () => {
-  const router = useRouter();
-  const [productData, setProductData] = useState({
-    productName: "",
-    imagePath: "",
-    category: null,
-    description: "",
-    price: null,
-    instagram: "",
-    facebook: "",
-    phoneNumber: "",
-  });
+const EditProductScreen = () => {
+  const params = useLocalSearchParams();
   const dropdownRef = useRef<SelectDropdown>(null);
+  const productString = params.product as string;
+  const initialProduct: Product = JSON.parse(productString);
 
-  // const addImage = async () => {
-  //   try {
-  //     const result = await ImagePicker.launchImageLibraryAsync({
-  //       mediaTypes: ImagePicker.MediaTypeOptions.Images, //image only
-  //       allowsEditing: true, //enable editing
-  //       quality: 1, //highest quality
-  //     });
+  // const [productData, setProductData] = useState({
+  //     productName: '',
+  //     imagePath: "",
+  //     category: null,
+  //     description: "",
+  //     price: null,
+  //     instagram: "",
+  //     facebook: "",
+  //     phoneNumber: ""
+  //   })
 
-  //     if(!result.canceled){
-  //       const selectedImageUri = result.assets[0].uri; //get image link
-  //       console.log(selectedImageUri); //display uri in console
-  //       setProductData({
-  //         ...productData,
-  //         imagePath: selectedImageUri //update state imagePath
-  //       });
-  //     }else{
-  //       console.log('Image selection cancelled')
-  //     }
-  //   } catch (error){
-  //     console.error('Error picking image: ', error)
-  //   }
-  // }
+  const [productData, setProductData] = useState<Product>(initialProduct);
+
+  const [selectedCategoryIndex, setSelectedCategoryIndex] = useState<number>(
+    categoryList.findIndex((item) => item.id === initialProduct.category)
+  );
+
+  const onInputChange = (
+    type: keyof typeof productData,
+    value: string | number
+  ) => {
+    setProductData({
+      ...productData,
+      [type]: value,
+    });
+  };
+
+  const saveData = () => {
+    if (
+      productData.productName === "" ||
+      productData.imagePath === "" ||
+      productData.description === "" ||
+      productData.price === null ||
+      productData.category === null
+    ) {
+      Alert.alert("Please fill all product information");
+      return;
+    }
+    if (
+      productData.phoneNumber === "" &&
+      productData.instagram === "" &&
+      productData.facebook === ""
+    ) {
+      Alert.alert("Please fill at least one seller contact");
+      return;
+    }
+    if (isNaN(Number(productData.price))) {
+      Alert.alert("Please provide a valid price!");
+      return;
+    }
+
+    const productToUpdate = realm.objectForPrimaryKey(
+      "Product",
+      productData.id
+    );
+
+    if (productToUpdate) {
+      realm.write(() => {
+        productToUpdate.productName = productData.productName;
+        productToUpdate.imagePath = productData.imagePath;
+        productToUpdate.category = Number(productData.category);
+        productToUpdate.description = productData.description;
+        productToUpdate.price = Number(productData.price);
+        productToUpdate.instagram = productData.instagram;
+        productToUpdate.facebook = productData.facebook;
+        productToUpdate.phoneNumber = productData.phoneNumber;
+      });
+
+      Alert.alert("Success", "Product updated successfully!", [
+        {
+          text: "OK",
+          onPress: () => router.replace("/"), //use 'replace' or 'push' based on requirement
+        },
+      ]);
+      //   if(dropdownRef.current){
+      //     dropdownRef.current.reset(); //reset dropdown
+      //   }
+    } else {
+      Alert.alert("Error", "Product not found!");
+    }
+  };
 
   const addImage = () => {
     ImagePicker.openPicker({
@@ -76,82 +127,17 @@ const AddProductScreen = () => {
       });
   };
 
-  const onInputChange = (
-    type: keyof typeof productData,
-    value: string | number
-  ) => {
-    setProductData({
-      ...productData,
-      [type]: value,
-    });
-  };
-
-  const saveData = () => {
-    if (
-      productData.productName === "" ||
-      productData.imagePath === "" ||
-      productData.description === "" ||
-      productData.price === "" ||
-      productData.category === null
-    ) {
-      alert("Please fill all product information");
-    } else if (
-      productData.phoneNumber === "" &&
-      productData.instagram === "" &&
-      productData.facebook === ""
-    ) {
-      alert("Please fill at least one seller contact");
-    } else {
-      const allData = realm.objects("Product");
-      const lastId =
-        allData.length === 0 ? 0 : (allData[allData.length - 1].id as number);
-
-      if (isNaN(Number(productData.price)) || productData.price === "") {
-        alert("Please provide a valid price!");
-        return;
-      }
-
-      realm.write(() => {
-        realm.create("Product", {
-          id: lastId + 1,
-          productName: productData.productName,
-          imagePath: productData.imagePath,
-          category: productData.category,
-          description: productData.description,
-          price: Number(productData.price),
-          instagram: productData.instagram,
-          facebook: productData.facebook,
-          phoneNumber: productData.phoneNumber,
-        });
-      });
-      console.log("Successfully saved your data");
-      Alert.alert("Success", "Product saved successfully!", [
-        {
-          text: "OK",
-          onPress: () => router.replace("/"), //use 'replace' or 'push' based on requirement
-        },
-      ]);
-
-      setProductData({
-        productName: "",
-        imagePath: "",
-        category: null,
-        description: "",
-        price: null,
-        instagram: "",
-        facebook: "",
-        phoneNumber: "",
-      });
-
-      if (dropdownRef.current) {
-        dropdownRef.current.reset(); //reset dropdown
-      }
-    }
-  };
-
   useEffect(() => {
-    console.log(productData);
-  }, [productData]);
+    const newProductData = JSON.parse(params.product as string);
+    setProductData(newProductData);
+    console.log("Recieved product for edit", newProductData);
+    if (dropdownRef.current) {
+      dropdownRef.current.reset();
+      setSelectedCategoryIndex(
+        categoryList.findIndex((item) => item.id === newProductData.category)
+      );
+    }
+  }, [params.product]);
 
   return (
     <View style={styles.mainContainer}>
@@ -185,19 +171,20 @@ const AddProductScreen = () => {
           />
           <SelectDropdown
             data={categoryList}
-            defaultButtonText="Select Category"
-            onSelect={(item) => {
-              onInputChange("category", item.id);
-            }}
-            buttonTextAfterSelection={(item) => {
-              return item.name;
-            }}
-            rowTextForSelection={(item) => {
-              return item.name;
-            }}
+            defaultValueByIndex={categoryList.findIndex(
+              (item) => item.id === productData.category
+            )}
+            onSelect={(selectedItem, index) =>
+              setProductData({
+                ...productData,
+                category: categoryList[index].id,
+              })
+            }
+            buttonTextAfterSelection={(selectedItem) => selectedItem.name}
+            rowTextForSelection={(item) => item.name}
+            ref={dropdownRef}
             buttonStyle={styles.selectDropdown}
             buttonTextStyle={styles.selectText}
-            ref={dropdownRef}
           />
         </View>
 
@@ -245,7 +232,7 @@ const AddProductScreen = () => {
             style={styles.saveButton}
             onPress={() => saveData()}
           >
-            <Text>SAVE</Text>
+            <Text>EDIT</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -312,4 +299,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddProductScreen;
+export default EditProductScreen;

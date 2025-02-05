@@ -61,6 +61,19 @@ const ShowProductScreen: FC = () => {
         })
     }
 
+    const logProductDetails = (product: Product) => {
+        console.log('Product Details:', product)
+    }
+
+    const editProduct = (product: Product) => {
+        const productParams = JSON.stringify(product)
+        router.push({
+            pathname: '/EditProductScreen',
+            params: {product: productParams}
+        })
+        console.log('Product to edit:', product)
+    }
+
     useEffect(() => {
         const data = params.products as unknown as string;
         try{
@@ -72,9 +85,9 @@ const ShowProductScreen: FC = () => {
         // console.log('this is the parameter', data)
     }, [params.products])
 
-    useEffect(() => {
-        console.log(isBuy)
-    }, [])
+    // useEffect(() => {
+    //     console.log(isBuy)
+    // }, [])
 
   return (
     <View style={styles.mainContainer}>
@@ -84,7 +97,10 @@ const ShowProductScreen: FC = () => {
             keyExtractor={(item) => item.id.toString()}
             ListEmptyComponent={() => <Text style={styles.emptyList}>No Products Found</Text>}
             renderItem={({item}) => (
-                <TouchableOpacity style={styles.itemButton}>
+                <TouchableOpacity 
+                    style={styles.itemButton}
+                    onPress={() => editProduct(item)}
+                >
 
                     <View style={styles.productContainer}>
                         <TouchableOpacity onPress={() => handleImagePress(item.imagePath)}>
