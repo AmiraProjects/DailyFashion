@@ -2,8 +2,28 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { AntDesign } from "@expo/vector-icons";
 import { Drawer } from "expo-router/drawer";
 import { StyleSheet } from "react-native";
+import SplashScreen from "@/components/SplashScreen";
+import { useState, useEffect } from "react";
 
 const RootLayout = () => {
+  const [isSplashVisible, setIsSplashVisible] = useState(true);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setIsSplashVisible(false);
+    }, 3000);
+  }, []);
+
+  if (isSplashVisible) {
+    return (
+      <SplashScreen
+        onTransition={() => {
+          setIsSplashVisible(false);
+        }}
+      />
+    );
+  }
+
   return (
     // <GestureHandlerRootView style={{flex: 1}}>
     //   <Drawer>
